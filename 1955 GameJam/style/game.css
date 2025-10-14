@@ -1,0 +1,57 @@
+.interface{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    padding: 10px;
+    gap: 10px;
+    background-color: white;
+}
+
+.contenidoJuego{
+    height: 100%;
+    width: 100%;
+}
+
+ .comedor{
+    position: relative;
+    display: block;
+    background-image: url(/images/comedor.png);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    height: 100%;
+    width: 100%;
+}
+
+.dormitorio{
+    display: none;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background-image: url(/images/dormitorio.png);
+    background-position: top;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100%;
+    width: 100%;
+}
+
+.patio{
+    display: none;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    background-image: url(/images/patio.png);
+    background-position: top;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100%;
+    width: 100%;
+} 

@@ -1,0 +1,37 @@
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&display=swap');
+
+@font-face {
+    font-family: "Crafter";
+    src: url(/fonts/Crafter.ttf);
+}
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: "Special Elite", system-ui;
+}
+
+html{
+    scroll-behavior: smooth;
+    scrollbar-width: none; /* Oculta la barra de scroll */
+    a{
+        text-decoration: none;
+    }
+    background-color: black;
+}
+body{
+    width: 1152px;
+    height: 648px; 
+    overflow: hidden;
+}
+
+.mainMenu {
+    position: relative;
+    background-image: url(/images/main.png);
+    background-position: top;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 100%;
+    width: 100%;
+}
+
