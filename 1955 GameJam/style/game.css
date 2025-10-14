@@ -1,8 +1,6 @@
 .interface{
     display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
     position: relative;
     top: 0px;
     left: 0px;
@@ -12,6 +10,13 @@
     padding: 10px;
     gap: 10px;
     background-color: white;
+}
+
+.topBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
 }
 
 .contenidoJuego{
@@ -75,4 +80,372 @@
 
 .levelBtn:hover {
     background-color: #666;
+}
+
+.objects {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.object {
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* Áreas interactivas transparentes */
+.interactive-area {
+    position: absolute;
+    cursor: pointer;
+    background: transparent;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    z-index: 5;
+    overflow: hidden;
+}
+
+/* Imágenes hotspot dentro de las áreas */
+.hotspot-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+}
+
+/* Efecto glow en hover - funciona con o sin imagen */
+.interactive-area:hover {
+    background: rgba(255, 255, 100, 0.15);
+    border: 2px solid rgba(255, 255, 100, 0.8);
+    box-shadow: 
+        0 0 15px rgba(255, 255, 100, 0.6),
+        0 0 30px rgba(255, 255, 100, 0.4),
+        inset 0 0 15px rgba(255, 255, 100, 0.2);
+    transform: scale(1.02);
+}
+
+/* Mostrar imagen highlight en hover */
+.interactive-area:hover .hotspot-image {
+    opacity: 0.7;
+}
+
+.interactive-area:active {
+    background: rgba(255, 255, 100, 0.3);
+    box-shadow: 
+        0 0 20px rgba(255, 255, 100, 0.8),
+        0 0 40px rgba(255, 255, 100, 0.5),
+        inset 0 0 20px rgba(255, 255, 100, 0.3);
+}
+
+.interactive-area:active .hotspot-image {
+    opacity: 1;
+}
+
+/* Posicionamiento específico de cada objeto interactivo */
+/* Ajustado según la imagen del comedor */
+
+/* Puerta */
+#puerta.interactive-area {
+    top: -0.3%;
+    left: 32.7%;
+    width: 14.0%;
+    height: 58.0%;
+}
+
+/* Armario - derecha, mueble blanco alto */
+
+/* Armario */
+#armario.interactive-area {
+    top: 28.6%;
+    left: 71.8%;
+    width: 14.0%;
+    height: 50.1%;
+}
+/* Mesa-papeles */
+
+/* Mesa-papeles */
+#mesa-radio.interactive-area {
+    top: 60.3%;
+    left: 14.0%;
+    width: 15.0%;
+    height: 35.0%;
+}
+
+/* Mesa con papeles y pan - centro abajo, mesa con sillas */
+
+/* Mesa-papeles */
+#mesa-papeles.interactive-area {
+    top: 63.9%;
+    left: 33.7%;
+    width: 32.0%;
+    height: 35.0%;
+}
+
+/* Cuadro en la pared - izquierda arriba, retrato enmarcado */
+
+/* Cuadro */
+#cuadro.interactive-area {
+    top: 28.5%;
+    left: 14.0%;
+    width: 9.0%;
+    height: 14.0%;
+}
+/* Tooltip opcional para nombres de objetos */
+.interactive-area[data-tooltip]::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: #f4e4c1;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 10;
+}
+
+.interactive-area:hover[data-tooltip]::after {
+    opacity: 1;
+}
+
+/* Variante de glow con colores vintage/sepia */
+.interactive-area.vintage-glow:hover {
+    background: rgba(244, 228, 193, 0.15);
+    border: 2px solid rgba(244, 228, 193, 0.8);
+    box-shadow: 
+        0 0 15px rgba(244, 228, 193, 0.6),
+        0 0 30px rgba(244, 228, 193, 0.4),
+        inset 0 0 15px rgba(244, 228, 193, 0.2);
+}
+
+
+.object:hover {
+    background: rgba(0, 0, 0, 0.9);
+}
+
+/* Dialogue System Styles */
+.dialogue-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    max-width: 600px;
+    background: rgba(0, 0, 0, 0.9);
+    border: 3px solid white;
+    border-radius: 8px;
+    padding: 20px;
+    z-index: 100;
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+}
+
+.character-portrait {
+    flex-shrink: 0;
+    width: 150px;
+    height: 200px;
+    border: 2px solid white;
+    border-radius: 4px;
+    overflow: hidden;
+    background: rgba(50, 50, 50, 0.8);
+}
+
+.character-portrait img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.dialogue-content {
+    flex: 1;
+    color: white;
+}
+
+.character-name {
+    margin: 0 0 10px 0;
+    font-size: 24px;
+    font-weight: bold;
+    color: #f4e4c1;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.dialogue-text {
+    margin: 0 0 10px 0;
+    font-size: 18px;
+    line-height: 1.5;
+    color: white;
+}
+
+.dialogue-hint {
+    margin: 0;
+    font-size: 14px;
+    font-style: italic;
+    color: #aaa;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .dialogue-container {
+        flex-direction: column;
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        max-width: calc(100% - 20px);
+    }
+    
+    .character-portrait {
+        width: 120px;
+        height: 160px;
+        margin: 0 auto;
+    }
+    
+    .character-name {
+        font-size: 20px;
+    }
+    
+    .dialogue-text {
+        font-size: 16px;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .dialogue-container {
+        max-width: 500px;
+    }
+    
+    .character-portrait {
+        width: 120px;
+        height: 160px;
+    }
+}
+
+/* UI Elements Styles */
+
+/* Object Info Message - Centrado y más visible */
+.object-info-message {
+    display: none;
+    position: fixed;
+    top: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.95);
+    color: white;
+    padding: 20px 40px;
+    border: 3px solid #f4e4c1;
+    border-radius: 10px;
+    z-index: 50;
+    font-size: 20px;
+    font-weight: bold;
+    text-align: center;
+    max-width: 600px;
+    box-shadow: 
+        0 0 20px rgba(244, 228, 193, 0.6),
+        0 0 40px rgba(244, 228, 193, 0.3);
+    animation: fadeInDown 0.5s ease-out;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* Timer Display */
+.timer-display {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.9);
+    color: #f4e4c1;
+    padding: 12px 20px;
+    border: 2px solid #f4e4c1;
+    border-radius: 5px;
+    z-index: 50;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* End Game Screen */
+.end-game-screen {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.95);
+    color: white;
+    padding: 40px 60px;
+    border: 4px solid white;
+    border-radius: 15px;
+    z-index: 150;
+    font-size: 24px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.9);
+}
+
+/* Info Panel */
+.info-panel {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 255, 255, 0.98);
+    color: black;
+    padding: 30px 40px;
+    border: 5px solid black;
+    border-radius: 10px;
+    z-index: 125;
+    max-width: 500px;
+    text-align: center;
+    font-size: 20px;
+    line-height: 1.6;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+}
+
+/* Responsive adjustments for UI elements */
+@media (max-width: 768px) {
+    .object-info-message {
+        top: 30px;
+        max-width: calc(100% - 40px);
+        font-size: 18px;
+        padding: 15px 30px;
+    }
+    
+    .timer-display {
+        font-size: 16px;
+        padding: 10px 15px;
+    }
+    
+    .info-panel {
+        max-width: calc(100% - 40px);
+        font-size: 18px;
+        padding: 25px 30px;
+    }
+    
+    .end-game-screen {
+        font-size: 20px;
+        padding: 30px 40px;
+    }
 } 

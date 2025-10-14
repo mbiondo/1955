@@ -8,36 +8,35 @@
 </head>
 <body>
   <div class="interface">
-    <button id="leftbtn">
-      <img src="https://placehold.co/70x70" alt="Botón izquierdo">
-    </button>
-
-    <nav class="levelNav">
-      <a href="#comedor" class="levelBtn">Nivel 1</a>
-      <a href="#dormitorio" class="levelBtn">Nivel 2</a>
-      <a href="#patio" class="levelBtn">Nivel 3</a>
-    </nav>
+    <div class="topBar">
+      <h1>RE5ISTENCIA EN5ENADA</h1>
+    </div>
 
     <main class="contenidoJuego">
       <section id="comedor" class="comedor">
-        <h1>Nivel 1: Comedor</h1>
-        <p>Placeholder para el juego en el comedor...</p>
-        <a href="../index.html" class="buttonMenu">Volver al Menú</a>
-      </section>
-
-      <section id="dormitorio" class="dormitorio">
-        <h1>Nivel 2: Dormitorio</h1>
-        <p>Placeholder para el juego en el dormitorio...</p>
-        <a href="../index.html" class="buttonMenu">Volver al Menú</a>
-      </section>
-
-      <section id="patio" class="patio">
-        <h1>Nivel 3: Patio</h1>
-        <p>Placeholder para el juego en el patio...</p>
+        <!-- Áreas interactivas con overlays opcionales -->
+        <div class="interactive-area" id="puerta" data-object="puerta" onclick="clickObject('puerta')" title="Puerta">
+        </div>
+        <div class="interactive-area" id="armario" data-object="armario" onclick="clickObject('armario')" title="Armario">
+        </div>
+        <div class="interactive-area" id="mesa-radio" data-object="mesa-radio" onclick="clickObject('mesa-radio')" title="Mesa con radio">
+        </div>
+        <div class="interactive-area" id="mesa-papeles" data-object="mesa-papeles" onclick="clickObject('mesa-papeles')" title="Mesa con papeles y pan">
+        </div>
+        <div class="interactive-area" id="cuadro" data-object="cuadro" onclick="clickObject('cuadro')" title="Cuadro">
+        </div>
         <a href="../index.html" class="buttonMenu">Volver al Menú</a>
       </section>
     </main>
   </div>
+  <div id="objectInfo" class="object-info-message"></div>
+  <div id="timer" class="timer-display">Tiempo: 60</div>
+  <div id="endGame" class="end-game-screen"></div>
+  <div id="infoPanel" class="info-panel"></div>
+  
+  <!-- Helper para ajuste drag & drop -->
+  <script src="drag-adjust-helper.js"></script>
+  <script src="game.js"></script>
 </body>
 
 </html>
