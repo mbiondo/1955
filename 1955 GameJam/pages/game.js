@@ -237,18 +237,32 @@ function playRadio() {
     if (radioPlayed) return;
     radioPlayed = true;
     
-    // Iniciar música de fondo de la radio (loop continuo)
-    radioBackgroundMusic = new Audio('../sounds/radio.mp3');
-    radioBackgroundMusic.volume = 0.05; // Volumen muy bajo para música de fondo
-    radioBackgroundMusic.loop = true; // Loop infinito
-    radioBackgroundMusic.play().catch(err => {
-        console.log('No se pudo reproducir la música de fondo de la radio:', err);
+    // Reproducir noticias.mp3
+    const noticiasSound = new Audio('../sounds/noticias.mp3');
+    noticiasSound.volume = 0.5;
+    
+    // Iniciar tango.mp3 1 segundo antes de que termine noticias.mp3
+    noticiasSound.addEventListener('loadedmetadata', () => {
+        const duration = noticiasSound.duration;
+        setTimeout(() => {
+            // Iniciar tango.mp3 como música de fondo
+            radioBackgroundMusic = new Audio('../sounds/tango.mp3');
+            radioBackgroundMusic.volume = 0.05; // Volumen muy bajo para música de fondo
+            radioBackgroundMusic.loop = true; // Loop infinito
+            radioBackgroundMusic.play().catch(err => {
+                console.log('No se pudo reproducir tango.mp3:', err);
+            });
+        }, (duration - 1) * 1000);
+    });
+    
+    noticiasSound.play().catch(err => {
+        console.log('No se pudo reproducir noticias.mp3:', err);
     });
     
     showObjectInfo('Reproduciendo noticia...', 8000);
     
-    // Después de unos segundos, empiezan los disparos y golpean la puerta
-    setTimeout(() => {
+    // Cuando termine noticias.mp3, reproducir disparos y puerta simultáneamente
+    noticiasSound.addEventListener('ended', () => {
         // Reproducir sonido de disparos
         const shotsSound = new Audio('../sounds/shots.mp3');
         shotsSound.volume = 0.3;
@@ -258,12 +272,11 @@ function playRadio() {
         
         showObjectInfo('*Se escuchan disparos y gritos afuera*', 3000);
         
-        setTimeout(() => {
-            gameStarted = true;
-            startTimer();
-            doorKnock();
-        }, 3000);
-    }, 8000);
+        // Llamar a doorKnock simultáneamente
+        gameStarted = true;
+        startTimer();
+        doorKnock();
+    });
 }
 
 let isKnocking = false;
