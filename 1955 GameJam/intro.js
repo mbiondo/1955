@@ -32,7 +32,7 @@ Presiona ESPACIO para continuar...`;
         this.typingSpeed = 50; // milisegundos por caracter
         
         // Audio de máquina de escribir - precargar
-        this.typewriterSound = new Audio('../sounds/typewritter.mp3');
+        this.typewriterSound = new Audio('sounds/typewritter.mp3');
         this.typewriterSound.volume = 0.3;
         this.typewriterSound.loop = true;
         this.typewriterSound.preload = 'auto';

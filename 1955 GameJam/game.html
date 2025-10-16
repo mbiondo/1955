@@ -1,0 +1,70 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego - GameJam</title>
+    <link rel="stylesheet" href="base.css">
+    <link rel="stylesheet" href="game.css">
+</head>
+<body>
+    <!-- Pantalla de Intro -->
+    <div id="introScreen" class="intro-screen">
+        <div class="intro-content">
+            <h1 class="intro-title">RE5ISTENCIA EN5ENADA</h1>
+            <button id="startButton" class="start-button">Comenzar</button>
+            <div id="introText" class="intro-text" style="display: none;"></div>
+            <div class="intro-skip" style="display: none;">Presiona ESPACIO para saltar</div>
+        </div>
+    </div>
+
+    <!-- Juego Principal -->
+    <div class="interface" id="gameInterface" style="display: none;">
+        <div class="topBar">
+            <h1>RE5ISTENCIA EN5ENADA</h1>
+            <div class="topBar-right">
+                <div id="timer" class="timer-display">Tiempo: 60</div>
+                <a href="index.html" class="buttonMenu">Volver al Menú</a>
+            </div>
+        </div>
+
+        <main class="contenidoJuego">
+            <section id="comedor" class="comedor">
+                <!-- Áreas interactivas individuales -->
+                
+                <!-- Puerta -->
+                <div class="interactive-area" id="puerta" data-object="puerta" onclick="clickObject('puerta')" title="Puerta"></div>
+                
+                <!-- Objetos en la pared/muebles -->
+                <div class="interactive-area" id="cuadro" data-object="cuadro" onclick="clickObject('cuadro')" title="Cuadro"></div>
+                <div class="interactive-area" id="armario" data-object="armario" onclick="clickObject('armario')" title="Armario"></div>
+                <div class="interactive-area" id="cocina" data-object="cocina" onclick="clickObject('cocina')" title="Cocina"></div>
+                <div class="interactive-area" id="mate" data-object="mate" onclick="clickObject('mate')" title="Mate"></div>
+                <div class="interactive-area" id="bandera" data-object="bandera" onclick="clickObject('bandera')" title="Bandera"></div>
+                
+                <!-- Mesa izquierda (antes mesa-radio) -->
+                <div class="interactive-area" id="radio" data-object="radio" onclick="clickObject('radio')" title="Radio"></div>
+                <div class="interactive-area" id="herramientas" data-object="herramientas" onclick="clickObject('herramientas')" title="Herramientas"></div>
+                
+                <!-- Mesa centro (antes mesa-papeles) -->
+                <div class="interactive-area" id="pan" data-object="pan" onclick="clickObject('pan')" title="Pan de centeno"></div>
+                <div class="interactive-area" id="papeles" data-object="papeles" onclick="clickObject('papeles')" title="Papeles"></div>
+                <div class="interactive-area" id="cuchillo" data-object="cuchillo" onclick="clickObject('cuchillo')" title="Cuchillo"></div>
+                <div class="interactive-area" id="botella" data-object="botella" onclick="clickObject('botella')" title="Botella"></div>
+                <div class="interactive-area" id="vaso" data-object="vaso" onclick="clickObject('vaso')" title="Vaso"></div>
+                
+                <!-- Objetos adicionales -->
+                <div class="interactive-area" id="escoba" data-object="escoba" onclick="clickObject('escoba')" title="Escoba"></div>
+            </section>
+        </main>
+    </div>
+    <div id="objectInfo" class="object-info-message"></div>
+    <div id="endGame" class="end-game-screen"></div>
+    <div id="infoPanel" class="info-panel"></div>
+
+    <!-- Scripts -->
+    <script src="intro.js"></script>
+    <script src="drag-adjust-helper.js"></script>
+    <script src="game.js"></script>
+</body>
+
+</html>

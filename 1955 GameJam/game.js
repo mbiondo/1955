@@ -17,7 +17,7 @@ const rooms = {
             'pan', 'papeles', 'cuchillo', 'botella', 'vaso',
             'escoba'
         ],
-        background: '../images/comedor.png'
+        background: 'images/comedor.png'
     }
 };
 
@@ -28,7 +28,7 @@ const characters = {
         dialogue: 'Juanjo, quieren matar a Perón, la marina está sublevada en la base naval de Río Santiago, y los leales estamos resistiendo. Yo me quedo para resistir, pero voy a necesitar algo para arreglar mi casilla.',
         correctResponse: 'Gracias, compañero. Tenemos que seguir resistiendo.',
         info: 'El obrero se fue a fortalecer su casilla para seguir resistiendo.',
-        image: '../images/characters/obrero.jpg'
+        image: 'images/characters/obrero.jpg'
     },
     enfermera: {
         name: 'Luisa',
@@ -36,7 +36,7 @@ const characters = {
         dialogue: '¿Hubo un bombardeo, no escuchaste? Volaron una manzana. Hay decenas de heridos y no sabemos si hay muertos todavía. Juanjo, necesitamos vendas, alcohol, lo que tengas, no damos abasto.',
         correctResponse: 'Muchas gracias, Juanjo. Escuchá, muchos vecinos se están yendo a La Plata. Sé que es difícil pero te sugiero hacer eso para no terminar en el hospital.',
         info: 'La enfermera pudo atender a los heridos con el alcohol.',
-        image: '../images/characters/enfermera.jpg'
+        image: 'images/characters/enfermera.jpg'
     },
     madre: {
         name: 'Graciela',
@@ -44,7 +44,7 @@ const characters = {
         dialogue: 'Ay, Juancito. Me estoy llevando a los chicos al camión que está llevando a la gente a La Plata. No tenemos nada para comer en el viaje o cuando lleguemos.',
         correctResponse: 'Muchas gracias, Juanjo. Nos salvaste el día. Vení con nosotros. Los milicos están arrasando todo.',
         info: 'Graciela y sus hijos pudieron evacuar con algo de comida.',
-        image: '../images/characters/madre.jpg'
+        image: 'images/characters/madre.jpg'
     }
 };
 
@@ -238,7 +238,7 @@ function playRadio() {
     radioPlayed = true;
     
     // Reproducir noticias.mp3
-    const noticiasSound = new Audio('../sounds/noticias.mp3');
+    const noticiasSound = new Audio('sounds/noticias.mp3');
     noticiasSound.volume = 0.5;
     
     // Iniciar tango.mp3 1 segundo antes de que termine noticias.mp3
@@ -246,7 +246,7 @@ function playRadio() {
         const duration = noticiasSound.duration;
         setTimeout(() => {
             // Iniciar tango.mp3 como música de fondo
-            radioBackgroundMusic = new Audio('../sounds/tango.mp3');
+            radioBackgroundMusic = new Audio('sounds/tango.mp3');
             radioBackgroundMusic.volume = 0.05; // Volumen muy bajo para música de fondo
             radioBackgroundMusic.loop = true; // Loop infinito
             radioBackgroundMusic.play().catch(err => {
@@ -264,7 +264,7 @@ function playRadio() {
     // Cuando termine noticias.mp3, reproducir disparos y puerta simultáneamente
     noticiasSound.addEventListener('ended', () => {
         // Reproducir sonido de disparos
-        const shotsSound = new Audio('../sounds/shots.mp3');
+        const shotsSound = new Audio('sounds/shots.mp3');
         shotsSound.volume = 0.3;
         shotsSound.play().catch(err => {
             console.log('No se pudo reproducir el sonido de disparos:', err);
@@ -289,7 +289,7 @@ function doorKnock() {
     document.getElementById('timer').textContent = 'Tiempo: ' + gameState.timeLeft;
     
     // Reproducir sonido de golpe en la puerta
-    const knockSound = new Audio('../sounds/doorKnock.mp3');
+    const knockSound = new Audio('sounds/doorKnock.mp3');
     knockSound.volume = 0.6;
     knockSound.play().catch(err => {
         console.log('No se pudo reproducir el sonido de golpe en la puerta:', err);
@@ -427,7 +427,7 @@ function typewriterEffect(element, text, speed = 30, onComplete = null) {
     let isTyping = true;
     
     // Crear el audio de la máquina de escribir con mejor configuración
-    const typewriterSound = new Audio('../sounds/typewritter.mp3');
+    const typewriterSound = new Audio('sounds/typewritter.mp3');
     typewriterSound.volume = 0.3;
     typewriterSound.loop = true;
     typewriterSound.preload = 'auto';
