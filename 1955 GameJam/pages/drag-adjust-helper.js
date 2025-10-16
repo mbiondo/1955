@@ -5,6 +5,7 @@ let adjustMode = false;
 let draggedElement = null;
 let offsetX = 0;
 let offsetY = 0;
+let selectedElement = null; // Para rotación
 
 // Activar/Desactivar modo de ajuste
 function toggleAdjustMode() {
@@ -15,6 +16,7 @@ function toggleAdjustMode() {
         console.log('%c🎨 MODO AJUSTE ACTIVADO', 'color: #00ff00; font-size: 16px; font-weight: bold');
         console.log('%c- Arrastrá las áreas para posicionarlas', 'color: #00ffff; font-size: 12px');
         console.log('%c- Usá las esquinas verdes para redimensionar', 'color: #00ffff; font-size: 12px');
+        console.log('%c- Click en un área + Q/E para rotar (o usa la rueda del mouse)', 'color: #00ffff; font-size: 12px');
         console.log('%c- Presioná D para crear nuevo hotspot', 'color: #00ffff; font-size: 12px');
         console.log('%c- Al soltar, se copiarán los estilos al portapapeles', 'color: #00ffff; font-size: 12px');
         console.log('%c- Presioná ESC para salir', 'color: #ffff00; font-size: 12px');
@@ -24,11 +26,20 @@ function toggleAdjustMode() {
             area.style.background = 'rgba(255, 0, 0, 0.2)';
             area.draggable = true;
             
-            // Deshabilitar click normal
+            // Guardar rotación actual si existe
+            if (!area.dataset.rotation) {
+                area.dataset.rotation = '0';
+            }
+            
+            // Deshabilitar click normal pero permitir selección
             area.onclick = (e) => {
                 e.preventDefault();
                 e.stopPropagation();
+                selectElement(area);
             };
+            
+            // Rotación con rueda del mouse
+            area.addEventListener('wheel', handleWheel, { passive: false });
         });
         
         // Agregar indicador visual
@@ -44,9 +55,14 @@ function toggleAdjustMode() {
             // Restaurar click normal
             const objectId = area.getAttribute('data-object');
             area.onclick = () => clickObject(objectId);
+            
+            // Remover listener de wheel
+            area.removeEventListener('wheel', handleWheel);
         });
         
+        selectedElement = null;
         removeAdjustModeIndicator();
+        removeRotationIndicator();
     }
 }
 
@@ -71,6 +87,7 @@ function showAdjustModeIndicator() {
             <div style="font-weight: bold; margin-bottom: 5px;">🎨 MODO AJUSTE</div>
             <div style="font-size: 12px;">• Arrastrá las áreas rojas</div>
             <div style="font-size: 12px;">• Usa las esquinas verdes para redimensionar</div>
+            <div style="font-size: 12px;">• <b>Q</b>/<b>E</b> o rueda del mouse para rotar</div>
             <div style="font-size: 12px;">• Presioná <b>D</b> para crear nuevo hotspot</div>
             <div style="font-size: 12px;">• <b>ESC</b> para salir</div>
         </div>
@@ -82,6 +99,103 @@ function removeAdjustModeIndicator() {
     const indicator = document.getElementById('adjust-mode-indicator');
     if (indicator) indicator.remove();
 }
+
+// === SISTEMA DE ROTACIÓN ===
+
+// Seleccionar elemento para rotar
+function selectElement(element) {
+    // Deseleccionar anterior
+    if (selectedElement) {
+        selectedElement.style.boxShadow = '';
+    }
+    
+    selectedElement = element;
+    selectedElement.style.boxShadow = '0 0 20px rgba(0, 255, 255, 1)';
+    
+    showRotationIndicator(element);
+    
+    console.log(`🎯 Seleccionado: ${element.id} - Usa Q/E o rueda del mouse para rotar`);
+}
+
+// Indicador de rotación actual
+function showRotationIndicator(element) {
+    removeRotationIndicator();
+    
+    const rotation = parseFloat(element.dataset.rotation || 0);
+    
+    const indicator = document.createElement('div');
+    indicator.id = 'rotation-indicator';
+    indicator.style.cssText = `
+        position: fixed;
+        bottom: 50px;
+        right: 20px;
+        background: rgba(0, 255, 255, 0.9);
+        color: black;
+        padding: 15px 20px;
+        border-radius: 10px;
+        z-index: 9999;
+        font-family: monospace;
+        font-size: 14px;
+        font-weight: bold;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    `;
+    indicator.innerHTML = `
+        🔄 ${element.id}<br>
+        Rotación: ${rotation.toFixed(1)}°
+    `;
+    
+    document.body.appendChild(indicator);
+}
+
+function removeRotationIndicator() {
+    const indicator = document.getElementById('rotation-indicator');
+    if (indicator) indicator.remove();
+}
+
+// Rotar elemento
+function rotateElement(element, delta) {
+    const currentRotation = parseFloat(element.dataset.rotation || 0);
+    let newRotation = currentRotation + delta;
+    
+    // Normalizar entre -180 y 180
+    while (newRotation > 180) newRotation -= 360;
+    while (newRotation < -180) newRotation += 360;
+    
+    element.dataset.rotation = newRotation.toString();
+    element.style.transform = `rotate(${newRotation}deg)`;
+    
+    showRotationIndicator(element);
+    
+    return newRotation;
+}
+
+// Handler de rueda del mouse para rotación
+function handleWheel(e) {
+    if (!adjustMode) return;
+    
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const element = e.currentTarget;
+    selectElement(element);
+    
+    // Delta positivo = rotar a la derecha, negativo = izquierda
+    const delta = e.deltaY > 0 ? -5 : 5;
+    rotateElement(element, delta);
+}
+
+// Teclas Q y E para rotar
+document.addEventListener('keydown', (e) => {
+    if (!adjustMode || !selectedElement) return;
+    
+    if (e.key === 'q' || e.key === 'Q') {
+        e.preventDefault();
+        rotateElement(selectedElement, -5); // Rotar izquierda
+    } else if (e.key === 'e' || e.key === 'E') {
+        e.preventDefault();
+        rotateElement(selectedElement, 5); // Rotar derecha
+    }
+});
 
 // Manejadores de drag & drop
 document.addEventListener('dragstart', (e) => {
@@ -120,18 +234,22 @@ document.addEventListener('drop', (e) => {
     const leftPercent = (x / containerRect.width) * 100;
     const topPercent = (y / containerRect.height) * 100;
     
-    // Aplicar nueva posición
+    // Aplicar nueva posición (mantener rotación)
+    const rotation = parseFloat(draggedElement.dataset.rotation || 0);
     draggedElement.style.left = `${leftPercent}%`;
     draggedElement.style.top = `${topPercent}%`;
     draggedElement.style.opacity = '1';
     draggedElement.style.cursor = 'grab';
+    if (rotation !== 0) {
+        draggedElement.style.transform = `rotate(${rotation}deg)`;
+    }
     
     // Obtener dimensiones actuales
     const width = (draggedElement.offsetWidth / containerRect.width) * 100;
     const height = (draggedElement.offsetHeight / containerRect.height) * 100;
     
-    // Generar CSS
-    const cssCode = generateCSS(draggedElement.id, leftPercent, topPercent, width, height);
+    // Generar CSS con rotación
+    const cssCode = generateCSS(draggedElement.id, leftPercent, topPercent, width, height, rotation);
     
     // Copiar al portapapeles
     copyToClipboard(cssCode);
@@ -155,16 +273,26 @@ document.addEventListener('dragend', () => {
 });
 
 // Generar CSS formateado
-function generateCSS(id, left, top, width, height) {
+function generateCSS(id, left, top, width, height, rotation = 0) {
     const name = id.charAt(0).toUpperCase() + id.slice(1);
-    return `
+    let css = `
 /* ${name} */
 #${id}.interactive-area {
     top: ${top.toFixed(1)}%;
     left: ${left.toFixed(1)}%;
     width: ${width.toFixed(1)}%;
-    height: ${height.toFixed(1)}%;
+    height: ${height.toFixed(1)}%;`;
+    
+    // Solo agregar transform si hay rotación
+    if (rotation && rotation !== 0) {
+        css += `
+    transform: rotate(${rotation.toFixed(1)}deg);`;
+    }
+    
+    css += `
 }`;
+    
+    return css;
 }
 
 // Copiar al portapapeles
@@ -243,9 +371,10 @@ document.head.appendChild(style);
 window.toggleAdjustMode = toggleAdjustMode;
 
 // Mensaje de bienvenida
-console.log('%c🎮 DRAG & DROP HELPER CARGADO', 'color: #00ffff; font-size: 14px; font-weight: bold');
+console.log('%c🎮 DRAG & DROP HELPER CON ROTACIÓN CARGADO', 'color: #00ffff; font-size: 14px; font-weight: bold');
 console.log('%cEscribí: toggleAdjustMode() para activar/desactivar', 'color: #ffff00; font-size: 12px');
 console.log('%cO presioná Ctrl+Shift+A para activar', 'color: #ffff00; font-size: 12px');
+console.log('%cNuevo: Q/E o rueda del mouse para rotar elementos', 'color: #00ff00; font-size: 12px');
 
 // Atajo de teclado Ctrl+Shift+A
 document.addEventListener('keydown', (e) => {
@@ -281,6 +410,9 @@ function createNewHotspot() {
     hotspot.setAttribute('data-object', newId);
     hotspot.setAttribute('title', `Nuevo Hotspot ${hotspotCounter}`);
     
+    // Inicializar rotación
+    hotspot.dataset.rotation = '0';
+    
     // Posición inicial en el centro
     hotspot.style.position = 'absolute';
     hotspot.style.left = '40%';
@@ -291,11 +423,15 @@ function createNewHotspot() {
     hotspot.style.background = 'rgba(255, 0, 0, 0.2)';
     hotspot.draggable = true;
     
-    // Deshabilitar click
+    // Deshabilitar click pero permitir selección
     hotspot.onclick = (e) => {
         e.preventDefault();
         e.stopPropagation();
+        selectElement(hotspot);
     };
+    
+    // Agregar listener de wheel para rotación
+    hotspot.addEventListener('wheel', handleWheel, { passive: false });
     
     // Hacer redimensionable
     makeResizable(hotspot);
@@ -303,7 +439,7 @@ function createNewHotspot() {
     container.appendChild(hotspot);
     
     console.log(`%c✨ Hotspot creado: ${newId}`, 'color: #00ff00; font-size: 14px; font-weight: bold');
-    console.log('%cArrástralo para posicionar, usa las esquinas para redimensionar', 'color: #00ffff; font-size: 12px');
+    console.log('%cArrástralo para posicionar, usa las esquinas para redimensionar, Q/E para rotar', 'color: #00ffff; font-size: 12px');
     
     showNotification(`✓ Hotspot creado: ${newId}`);
 }

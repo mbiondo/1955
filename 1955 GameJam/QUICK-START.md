@@ -3,6 +3,11 @@
 ## 🎯 Objetivo
 Agregar una **estantería** clickeable al comedor que contenga libros.
 
+> **💡 Nota:** Al hacer clic en "Iniciar Juego" desde el menú principal, verás una intro narrativa. Presiona **ESPACIO** para saltarla durante el desarrollo.
+>
+> **🔧 Para forzar ver la intro:** Agrega `?forceIntro=true` a la URL del juego
+> **⏭️ Para saltar la intro:** Agrega `?skipIntro=true` a la URL del juego
+
 ---
 
 ## 📝 Paso a Paso

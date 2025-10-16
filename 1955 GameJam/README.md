@@ -24,6 +24,18 @@
 
 Este es un juego narrativo de tipo "point and click" ambientado en 1955. Los jugadores interactúan con diferentes objetos y personajes para avanzar en la historia.
 
+### 🎬 Pantalla de Intro
+
+Al iniciar el juego desde el menú principal, aparece una pantalla de intro con texto que se escribe gradualmente (efecto máquina de escribir). Incluye:
+
+- **Texto narrativo** que establece el contexto histórico
+- **Efecto de escritura** letra por letra
+- **Posibilidad de saltar** con ESPACIO, ENTER o clic
+- **Solo se muestra la primera vez** (memoria persistente)
+- **Transición suave** al juego
+
+Para modificar el texto de la intro, editar `intro.js` en la propiedad `introText` de la clase `IntroSystem`.
+
 ---
 
 ## 📁 Estructura del Proyecto
@@ -535,6 +547,65 @@ function changeRoom(direction) {
     }
 }
 ```
+
+## 🎬 Personalizar la Pantalla de Intro
+
+### Modificar el Texto de la Intro
+
+Abrir `intro.js` y buscar la propiedad `introText` en la clase `IntroSystem`:
+
+```javascript
+this.introText = `Ensenada, 1955.
+
+El golpe de estado ha sumido al país en el caos.
+Las calles hierven de manifestantes, el ejército patrulla con tanques,
+y la resistencia se organiza en las sombras.
+
+Tú eres parte de la resistencia.
+// ... resto del texto
+`;
+```
+
+**Tips para el texto:**
+- Usar saltos de línea (`\n`) para párrafos
+- Mantener un tono narrativo e inmersivo
+- Incluir contexto histórico relevante
+- Terminar con una llamada a acción
+
+### Modificar la Velocidad de Escritura
+
+Cambiar el valor de `typingSpeed` (en milisegundos):
+```javascript
+this.typingSpeed = 50; // Más rápido: 30, Más lento: 80
+```
+
+### Modificar los Controles
+
+En la función `bindEvents()`, cambiar las teclas permitidas:
+```javascript
+if (e.code === 'Space' || e.code === 'Enter' || e.code === 'KeyS') {
+    // Agregar 'S' para saltar, etc.
+}
+```
+
+### Resetear la Intro (para testing)
+
+Abrir la consola del navegador (F12) y ejecutar:
+```javascript
+resetIntro(); // Muestra la intro nuevamente
+```
+
+O agregar parámetros a la URL del juego:
+- **`?forceIntro=true`** → Fuerza mostrar la intro (ignora localStorage)
+- **`?skipIntro=true`** → Salta la intro completamente
+
+### Ver Logs de Debug
+
+La intro incluye logs en la consola para debugging:
+- 🎬 Intro.js loaded - DOM ready
+- 📊 Intro shown before: [true/false]
+- 🎭 Showing intro for first time
+- ⏭️ Intro already shown, going straight to game
 
 ---
 
