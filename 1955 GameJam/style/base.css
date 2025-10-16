@@ -2,7 +2,7 @@
 
 @font-face {
     font-family: "Crafter";
-    src: url(/fonts/Crafter.ttf);
+    src: url(../fonts/Crafter.ttf);
 }
 *{
     box-sizing: border-box;
@@ -27,7 +27,7 @@ body{
 
 .mainMenu {
     position: relative;
-    background-image: url(/images/main.png);
+    background-image: url(../images/main.png);
     background-position: top;
     background-repeat: no-repeat;
     background-size: cover;

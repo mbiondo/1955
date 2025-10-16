@@ -17,7 +17,7 @@ const rooms = {
             'pan', 'papeles', 'cuchillo', 'botella', 'vaso',
             'escoba'
         ],
-        background: '/images/comedor.png'
+        background: '../images/comedor.png'
     }
 };
 
@@ -28,7 +28,7 @@ const characters = {
         dialogue: 'Juanjo, quieren matar a Perón, la marina está sublevada en la base naval de Río Santiago, y los leales estamos resistiendo. Yo me quedo para resistir, pero voy a necesitar algo para arreglar mi casilla.',
         correctResponse: 'Gracias, compañero. Tenemos que seguir resistiendo.',
         info: 'El obrero se fue a fortalecer su casilla para seguir resistiendo.',
-        image: '/images/characters/obrero.jpg'
+        image: '../images/characters/obrero.jpg'
     },
     enfermera: {
         name: 'Luisa',
@@ -36,7 +36,7 @@ const characters = {
         dialogue: '¿Hubo un bombardeo, no escuchaste? Volaron una manzana. Hay decenas de heridos y no sabemos si hay muertos todavía. Juanjo, necesitamos vendas, alcohol, lo que tengas, no damos abasto.',
         correctResponse: 'Muchas gracias, Juanjo. Escuchá, muchos vecinos se están yendo a La Plata. Sé que es difícil pero te sugiero hacer eso para no terminar en el hospital.',
         info: 'La enfermera pudo atender a los heridos con el alcohol.',
-        image: '/images/characters/enfermera.jpg'
+        image: '../images/characters/enfermera.jpg'
     },
     madre: {
         name: 'Graciela',
@@ -44,7 +44,7 @@ const characters = {
         dialogue: 'Ay, Juancito. Me estoy llevando a los chicos al camión que está llevando a la gente a La Plata. No tenemos nada para comer en el viaje o cuando lleguemos.',
         correctResponse: 'Muchas gracias, Juanjo. Nos salvaste el día. Vení con nosotros. Los milicos están arrasando todo.',
         info: 'Graciela y sus hijos pudieron evacuar con algo de comida.',
-        image: '/images/characters/madre.jpg'
+        image: '../images/characters/madre.jpg'
     }
 };
 

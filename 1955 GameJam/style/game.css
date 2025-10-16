@@ -69,7 +69,7 @@
  .comedor{
     position: relative;
     display: block;
-    background-image: url(/images/comedor.png);
+    background-image: url(../images/comedor.png);
     background-position: center;
     background-repeat: no-repeat;
     background-size: contain;
@@ -82,7 +82,7 @@
     position: absolute;
     top: 0px;
     left: 0px;
-    background-image: url(/images/dormitorio.png);
+    background-image: url(../images/dormitorio.png);
     background-position: top;
     background-repeat: no-repeat;
     background-size: cover;
@@ -95,7 +95,7 @@
     position: absolute;
     top: 0px;
     left: 0px;
-    background-image: url(/images/patio.png);
+    background-image: url(../images/patio.png);
     background-position: top;
     background-repeat: no-repeat;
     background-size: cover;

@@ -89,6 +89,8 @@ function showAdjustModeIndicator() {
             <div style="font-size: 12px;">• Usa las esquinas verdes para redimensionar</div>
             <div style="font-size: 12px;">• <b>Q</b>/<b>E</b> o rueda del mouse para rotar</div>
             <div style="font-size: 12px;">• Presioná <b>D</b> para crear nuevo hotspot</div>
+            <div style="font-size: 12px;">• <b>R</b> para resetear rotación</div>
+            <div style="font-size: 12px; color: #ffff00; margin-top: 5px;">💡 Objetos rotados: arrastra desde el centro</div>
             <div style="font-size: 12px;">• <b>ESC</b> para salir</div>
         </div>
     `;
@@ -107,14 +109,53 @@ function selectElement(element) {
     // Deseleccionar anterior
     if (selectedElement) {
         selectedElement.style.boxShadow = '';
+        removeElementRotationLabel(selectedElement);
     }
     
     selectedElement = element;
     selectedElement.style.boxShadow = '0 0 20px rgba(0, 255, 255, 1)';
     
     showRotationIndicator(element);
+    addElementRotationLabel(element);
     
     console.log(`🎯 Seleccionado: ${element.id} - Usa Q/E o rueda del mouse para rotar`);
+}
+
+// Agregar etiqueta de rotación en el elemento
+function addElementRotationLabel(element) {
+    // Remover etiqueta anterior si existe
+    removeElementRotationLabel(element);
+    
+    const rotation = parseFloat(element.dataset.rotation || 0);
+    
+    if (rotation !== 0) {
+        const label = document.createElement('div');
+        label.className = 'rotation-label';
+        label.style.cssText = `
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 255, 255, 0.95);
+            color: black;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 11px;
+            font-weight: bold;
+            z-index: 10001;
+            pointer-events: none;
+            white-space: nowrap;
+        `;
+        label.textContent = `🔄 ${rotation.toFixed(1)}°`;
+        element.appendChild(label);
+    }
+}
+
+// Remover etiqueta de rotación del elemento
+function removeElementRotationLabel(element) {
+    const label = element.querySelector('.rotation-label');
+    if (label) label.remove();
 }
 
 // Indicador de rotación actual
@@ -165,6 +206,7 @@ function rotateElement(element, delta) {
     element.style.transform = `rotate(${newRotation}deg)`;
     
     showRotationIndicator(element);
+    addElementRotationLabel(element);
     
     return newRotation;
 }
@@ -194,8 +236,21 @@ document.addEventListener('keydown', (e) => {
     } else if (e.key === 'e' || e.key === 'E') {
         e.preventDefault();
         rotateElement(selectedElement, 5); // Rotar derecha
+    } else if (e.key === 'r' || e.key === 'R') {
+        e.preventDefault();
+        resetRotation(selectedElement); // Resetear rotación
     }
 });
+
+// Resetear rotación a 0
+function resetRotation(element) {
+    element.dataset.rotation = '0';
+    element.style.transform = 'rotate(0deg)';
+    showRotationIndicator(element);
+    removeElementRotationLabel(element);
+    console.log(`🔄 Rotación reseteada para ${element.id}`);
+    showNotification(`✓ ${element.id} - Rotación reseteada`);
+}
 
 // Manejadores de drag & drop
 document.addEventListener('dragstart', (e) => {
@@ -207,10 +262,16 @@ document.addEventListener('dragstart', (e) => {
         offsetX = e.clientX - rect.left;
         offsetY = e.clientY - rect.top;
         
+        // Guardar centro del elemento para rotación
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        draggedElement.dataset.dragCenterX = centerX;
+        draggedElement.dataset.dragCenterY = centerY;
+        
         draggedElement.style.opacity = '0.7';
         draggedElement.style.cursor = 'grabbing';
         
-        console.log(`📦 Arrastrando: ${draggedElement.id}`);
+        console.log(`📦 Arrastrando: ${draggedElement.id} (Rotación: ${draggedElement.dataset.rotation}°)`);
     }
 });
 
@@ -227,19 +288,39 @@ document.addEventListener('drop', (e) => {
     const containerRect = container.getBoundingClientRect();
     
     // Calcular posición relativa al contenedor
-    const x = e.clientX - containerRect.left - offsetX;
-    const y = e.clientY - containerRect.top - offsetY;
+    // Para elementos rotados, usar el centro como referencia
+    const rotation = parseFloat(draggedElement.dataset.rotation || 0);
+    
+    let x, y;
+    if (rotation !== 0) {
+        // Usar el centro del elemento como punto de anclaje
+        const elementWidth = draggedElement.offsetWidth;
+        const elementHeight = draggedElement.offsetHeight;
+        
+        // Posición del centro del elemento
+        const centerX = e.clientX - containerRect.left;
+        const centerY = e.clientY - containerRect.top;
+        
+        // Calcular top-left desde el centro
+        x = centerX - elementWidth / 2;
+        y = centerY - elementHeight / 2;
+    } else {
+        // Sin rotación, usar el offset normal
+        x = e.clientX - containerRect.left - offsetX;
+        y = e.clientY - containerRect.top - offsetY;
+    }
     
     // Convertir a porcentajes
     const leftPercent = (x / containerRect.width) * 100;
     const topPercent = (y / containerRect.height) * 100;
     
-    // Aplicar nueva posición (mantener rotación)
-    const rotation = parseFloat(draggedElement.dataset.rotation || 0);
+    // Aplicar nueva posición manteniendo rotación
     draggedElement.style.left = `${leftPercent}%`;
     draggedElement.style.top = `${topPercent}%`;
     draggedElement.style.opacity = '1';
     draggedElement.style.cursor = 'grab';
+    
+    // Asegurar que la rotación se mantiene
     if (rotation !== 0) {
         draggedElement.style.transform = `rotate(${rotation}deg)`;
     }
@@ -460,6 +541,7 @@ function makeResizable(element) {
             border: 2px solid #fff;
             z-index: 10;
             cursor: ${pos}-resize;
+            border-radius: 50%;
         `;
         
         // Posicionar handles
@@ -486,6 +568,25 @@ function makeResizable(element) {
         
         element.appendChild(handle);
     });
+    
+    // Agregar indicador de centro para arrastre de elementos rotados
+    const centerIndicator = document.createElement('div');
+    centerIndicator.className = 'center-indicator';
+    centerIndicator.style.cssText = `
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 20px;
+        height: 20px;
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+        z-index: 9;
+    `;
+    centerIndicator.innerHTML = `
+        <div style="position: absolute; width: 2px; height: 20px; background: rgba(255, 255, 0, 0.8); left: 50%; transform: translateX(-50%);"></div>
+        <div style="position: absolute; width: 20px; height: 2px; background: rgba(255, 255, 0, 0.8); top: 50%; transform: translateY(-50%);"></div>
+    `;
+    element.appendChild(centerIndicator);
 }
 
 // Variables para redimensión
@@ -498,11 +599,39 @@ let startHeight = 0;
 let startLeft = 0;
 let startTop = 0;
 let resizePosition = '';
+let elementRotation = 0;
+
+// Función auxiliar: convertir grados a radianes
+function toRadians(degrees) {
+    return degrees * Math.PI / 180;
+}
+
+// Función auxiliar: rotar un punto alrededor del centro
+function rotatePoint(x, y, centerX, centerY, angleDegrees) {
+    const angleRad = toRadians(angleDegrees);
+    const cos = Math.cos(angleRad);
+    const sin = Math.sin(angleRad);
+    
+    // Trasladar al origen
+    const dx = x - centerX;
+    const dy = y - centerY;
+    
+    // Rotar
+    const rotatedX = dx * cos - dy * sin;
+    const rotatedY = dx * sin + dy * cos;
+    
+    // Trasladar de vuelta
+    return {
+        x: rotatedX + centerX,
+        y: rotatedY + centerY
+    };
+}
 
 function startResize(e, element, position) {
     isResizing = true;
     currentElement = element;
     resizePosition = position;
+    elementRotation = parseFloat(element.dataset.rotation || 0);
     
     startX = e.clientX;
     startY = e.clientY;
@@ -514,65 +643,94 @@ function startResize(e, element, position) {
     startLeft = rect.left - container.left;
     startTop = rect.top - container.top;
     
+    // Calcular el centro del elemento
+    const centerX = startLeft + startWidth / 2;
+    const centerY = startTop + startHeight / 2;
+    
     document.addEventListener('mousemove', resize);
     document.addEventListener('mouseup', stopResize);
+    
+    console.log(`🔧 Redimensionando con rotación: ${elementRotation.toFixed(1)}°`);
 }
 
 function resize(e) {
     if (!isResizing || !currentElement) return;
     
-    const dx = e.clientX - startX;
-    const dy = e.clientY - startY;
-    
     const container = currentElement.parentElement.getBoundingClientRect();
+    
+    // Obtener posición del mouse relativa al contenedor
+    const mouseX = e.clientX - container.left;
+    const mouseY = e.clientY - container.top;
+    
+    // Calcular el centro actual del elemento
+    const centerX = startLeft + startWidth / 2;
+    const centerY = startTop + startHeight / 2;
+    
+    // Si hay rotación, rotar la posición del mouse al espacio del elemento
+    let adjustedDx = e.clientX - startX;
+    let adjustedDy = e.clientY - startY;
+    
+    if (elementRotation !== 0) {
+        // Rotar el delta inversamente para que coincida con el espacio del elemento
+        const angleRad = toRadians(-elementRotation);
+        const cos = Math.cos(angleRad);
+        const sin = Math.sin(angleRad);
+        
+        const rotatedDx = adjustedDx * cos - adjustedDy * sin;
+        const rotatedDy = adjustedDx * sin + adjustedDy * cos;
+        
+        adjustedDx = rotatedDx;
+        adjustedDy = rotatedDy;
+    }
+    
+    // Aplicar redimensionamiento según la esquina
+    let newWidth = startWidth;
+    let newHeight = startHeight;
+    let newLeft = startLeft;
+    let newTop = startTop;
     
     if (resizePosition === 'se') {
         // Esquina inferior derecha: aumentar ancho y alto
-        const newWidth = Math.max(50, startWidth + dx);
-        const newHeight = Math.max(50, startHeight + dy);
-        currentElement.style.width = `${newWidth}px`;
-        currentElement.style.height = `${newHeight}px`;
+        newWidth = Math.max(50, startWidth + adjustedDx);
+        newHeight = Math.max(50, startHeight + adjustedDy);
     } else if (resizePosition === 'sw') {
-        // Esquina inferior izquierda: cambiar left, ancho y aumentar alto
-        const newWidth = Math.max(50, startWidth - dx);
-        const newHeight = Math.max(50, startHeight + dy);
-        const newLeft = startLeft + dx;
-        currentElement.style.width = `${newWidth}px`;
-        currentElement.style.height = `${newHeight}px`;
-        currentElement.style.left = `${(newLeft / container.width) * 100}%`;
+        // Esquina inferior izquierda: cambiar ancho (reducir desde izq) y aumentar alto
+        newWidth = Math.max(50, startWidth - adjustedDx);
+        newHeight = Math.max(50, startHeight + adjustedDy);
+        newLeft = startLeft + (startWidth - newWidth);
     } else if (resizePosition === 'ne') {
-        // Esquina superior derecha: aumentar ancho, cambiar top y alto
-        const newWidth = Math.max(50, startWidth + dx);
-        const newHeight = Math.max(50, startHeight - dy);
-        const newTop = startTop + dy;
-        currentElement.style.width = `${newWidth}px`;
-        currentElement.style.height = `${newHeight}px`;
-        currentElement.style.top = `${(newTop / container.height) * 100}%`;
+        // Esquina superior derecha: aumentar ancho, reducir alto desde arriba
+        newWidth = Math.max(50, startWidth + adjustedDx);
+        newHeight = Math.max(50, startHeight - adjustedDy);
+        newTop = startTop + (startHeight - newHeight);
     } else if (resizePosition === 'nw') {
-        // Esquina superior izquierda: cambiar left, top, ancho y alto
-        const newWidth = Math.max(50, startWidth - dx);
-        const newHeight = Math.max(50, startHeight - dy);
-        const newLeft = startLeft + dx;
-        const newTop = startTop + dy;
-        currentElement.style.width = `${newWidth}px`;
-        currentElement.style.height = `${newHeight}px`;
-        currentElement.style.left = `${(newLeft / container.width) * 100}%`;
-        currentElement.style.top = `${(newTop / container.height) * 100}%`;
+        // Esquina superior izquierda: reducir ancho y alto desde arriba-izquierda
+        newWidth = Math.max(50, startWidth - adjustedDx);
+        newHeight = Math.max(50, startHeight - adjustedDy);
+        newLeft = startLeft + (startWidth - newWidth);
+        newTop = startTop + (startHeight - newHeight);
     }
+    
+    // Aplicar los cambios
+    currentElement.style.width = `${newWidth}px`;
+    currentElement.style.height = `${newHeight}px`;
+    currentElement.style.left = `${(newLeft / container.width) * 100}%`;
+    currentElement.style.top = `${(newTop / container.height) * 100}%`;
 }
 
 function stopResize() {
     if (isResizing && currentElement) {
         // Generar CSS actualizado
         const container = currentElement.parentElement.getBoundingClientRect();
-        const rect = currentElement.getBoundingClientRect();
         
-        const leftPercent = ((rect.left - container.left) / container.width) * 100;
-        const topPercent = ((rect.top - container.top) / container.height) * 100;
-        const widthPercent = (rect.width / container.width) * 100;
-        const heightPercent = (rect.height / container.height) * 100;
+        // Obtener posición y tamaño actuales desde los estilos aplicados
+        const leftPercent = parseFloat(currentElement.style.left);
+        const topPercent = parseFloat(currentElement.style.top);
+        const widthPercent = (currentElement.offsetWidth / container.width) * 100;
+        const heightPercent = (currentElement.offsetHeight / container.height) * 100;
         
-        const cssCode = generateCSS(currentElement.id, leftPercent, topPercent, widthPercent, heightPercent);
+        const rotation = parseFloat(currentElement.dataset.rotation || 0);
+        const cssCode = generateCSS(currentElement.id, leftPercent, topPercent, widthPercent, heightPercent, rotation);
         copyToClipboard(cssCode);
         
         console.log('%c📋 CSS ACTUALIZADO (copiado):', 'color: #00ff00; font-size: 14px; font-weight: bold');
@@ -583,6 +741,7 @@ function stopResize() {
     
     isResizing = false;
     currentElement = null;
+    elementRotation = 0;
     document.removeEventListener('mousemove', resize);
     document.removeEventListener('mouseup', stopResize);
 }
